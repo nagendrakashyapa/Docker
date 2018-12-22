@@ -88,7 +88,7 @@ docker run command:
 
 # Creating first container
 
-sudo docker run -i -t ubuntu /bin/bash
+sudo docker run -it ubuntu /bin/bash
 
 	-i : opens STDIN from the container
 	-t : tells docker to assign a pseudo-tty to the
@@ -119,9 +119,15 @@ sudo docker run -i -t ubuntu /bin/bash
 	ps -ef
 
 
-#
-Setup SSH for the container
-	ssh gamut@172.17.0.2
+# SSH setup for containers
+Setup SSH in the containers so that they can communicate to each other
+
+- Create two containers
+		172.17.0.2
+		172.17.0.3
+- Try to connect to 172.17.0.3 from 172.17.0.2 using below command. You will get an 
+  error
+	$ ssh gamut@172.17.0.3
 
 - Install ssh server
 $ apt-get update
@@ -134,8 +140,8 @@ $ service ssh start (status/stop)
 $ useradd -m -d /home/gamut -s /bin/bash gamut
 $ passwd gamut
 	
-- Connect to the container using ssh
-$ ssh gamut@172.17.0.2
+- Connect to the container using ssh from your host or any other container.
+$ ssh gamut@172.17.0.3
 
 
 #
@@ -172,12 +178,12 @@ $ docker rename db-server3 db-server-name3
 # Deleting a container
 $ docker rm ID/name
 
-
 #
 docker info
 
 # Delete all containers at once.
  $ docker rm `docker ps -a -q`
+ $ docker rm $(docker ps -a -q)
 
 
 # Starting a stopped container
@@ -196,19 +202,17 @@ docker info
 	
 
 # List Stopped containers only
-$ docker ps -a -f status=exited
-	Where Status can be exited / running
+$ docker ps -a -f status=exited ( Where Status can be exited / running )
 
 
 DAY-3:
 	# Inspecting the container's processes from host machine
 	- docker top <container-name>
 
-
 # Stoping a container from 'host machine'
 	- docker stop dgamut
-	- docker stop ee319cddd42e(SIGTERM)
-	- docker kill dgamut (SIGKILL)
+	- docker stop ee319cddd42e(Gracefully stop the cntainer with SIGTERM)
+	- docker kill dgamut (Forcibly stop the container with SIGKILL)
 
 # Show last 4 containers (stopped/running)
 	- docker ps -n4
@@ -222,14 +226,20 @@ DAY-3:
 
 	$ docker inspect --format '{{.Config.Hostname}}' dgamut
 
-	$ docker inspect -f '{{.NetworkSettings.Networks.bridge.IPAddress}}' 
+	$ docker inspect -f '{{.NetworkSettings.Networks.bridge.IPAddress}}' db-server1
+
+	$ docker inspect --format {{.NetworkSettings.Networks.bridge.IPAddress}} 
+	 `docker ps -q`
 	
-   	Note: use --format (OR) -f  	
+ Note: use --format (OR) -f  	
 
 
 - Remove all running containers
 		docker rm -f `docker ps -q`
 
+#
+$ docker pause db-server1
+$ docker unpause db-server1
 
 
 DAY-4:
@@ -246,10 +256,17 @@ Agenda:
 - From images, we launch containers.
 	
 # Listing docker images
-	- docker image ls
+		- docker image ls
 
 - Images live in '/var/lib/docker/image/aufs/imagedb/content/sha256'
-- Containers live in /var/lib/docker/containers
+- Containers live in '/var/lib/docker/containers'
+
+
+# Images in Build and Deployments OR DevOps world!
+a. Works In my machine problem.
+b. Developers can set local env.
+c. Issue? don't troubleshoot. Just throw it away and create new instantly.
+d. Auto scale your machine
 
 
 DAY-5:
@@ -309,11 +326,11 @@ PROJECT-2:
 DAY-6:
 # Creating docker image using "docker build" command
 =================
-	- mkdir webapp 
-	- cd webapp
+	- mkdir school-app 
+	- cd school-app
 	- touch Dockerfile
 
-	--> 'webapp' directory is called "context" or "build context".
+	--> 'school-app' directory is called "context" or "build context".
 		It contains the code, files or other data that you want to include in the image.
 	
 	- Write Dokckerfile:
@@ -333,19 +350,24 @@ index.html:
 </html>
  	
 # Building docker image:
-	$ cd webapp
-	$ docker build -t "nageshvkn/nginx-img" .
+	$ cd school-app
+	$ docker build -t="nageshvkn/nginx-img" .
+	$ docker build -f MyDockerfile -t="nageshvkn/nginx-img" . [If Dockerfile name
+																	is different]
 
 # Listing docker image
 $ docker images
 
 # Pushing custom images to docker repository
 	$ docker login
-	$ docker push gamut/nginx-image
+	$ docker push nageshvkn/nginx-image
 
 #
 Testing Image
 
+# Remove the local image so that it will be downloaded from Docker Hub.
+	$ docker rmi nageshvkn/nginx-image
+ 
 # Creating a new container from our image
 	$ docker run -it --name nginx-container nageshvkn/nginx-img /bin/bash
 
@@ -403,7 +425,7 @@ Docker Image layers
 	$ docker build --no-cache -t="username/imagename" .
 
 
-# Container creation process
+# Container creation process - Deep dive
   How contaner is created:
 		
 		Writable Layer		
@@ -436,7 +458,7 @@ can you explain how you have implemented Docker in your project?
 3. Create docker image for the application(gamutkart) with
    war file, tomcat,n...etc.
 
-4. Create docker containers using create_env.sh 10
+4. Create docker containers using './create-env.sh 10'
 5. Launch the gamutkart application from all containers.
 
 Step:3 --> creating docker image for gamutkart with tomcat 
@@ -494,6 +516,8 @@ Run docker command without sudo.
 
 	3. Logout and Login back so that your group membership
 	   is re-evaluated.
+
+-- verification and cleanup
 
 	4. Check group existance:
 		$ sudo grep docker /etc/group
