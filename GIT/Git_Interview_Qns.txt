@@ -130,6 +130,15 @@ method:2
 	git ls-tree <sha> --> Lists files committed as part of 
 	a commit.
 
+54.How do you clone the repository with a single/particular branch?
+
+$ git clone -b dev_1.2.4 --single-branch https://github.com/nageshvkn/flipkart899.git
+
+55.
+How to compare two branches?
+$ git diff master..dev_1234 [compare local branches]
+$ git diff origin/master..origin/dev_1234 [compare remote branches]
+
 
 Qns:
 1. How do you revert the code which is already committed in the repository?
