@@ -18,7 +18,10 @@ export JENKINS_HOME=/home/praveen/jen/.jenkins
 Jenkins installation:
 =====================
 Approach:1
-	1. download JDK
+	1. download JDK and setup JAVA_HOME Environment variable as shown below
+		export JAVA_HOME=/path/to/extracted/java/without/bin/dir
+		export PATH=$JAVA_HOME/bin:$PATH
+
 	2. download Tomcat
 	3. download jenkins.war
 	4. copy jenkins.war to $TOMCAT_HOME/webapps
@@ -99,8 +102,9 @@ p
 		- jdk or maven installation
 		- disk space
 		- port change
+		- slave node configuration issues
 
-p
+
 14. Where does Jenkins store global and job related configurations?
 	Global configurations: $JENKINS_HOME/.jenkins/config.xml
 	Job configurations: $JENKINS_HOME/.jenkins/jobs/job_name/config.xml
