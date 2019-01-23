@@ -4,11 +4,14 @@ Office: 944897 1000
 ===============================================
 
 1. What is continuos integration?
-   Continuous Delivery C.D?
 
 	- C.I integration is nothing but continous compilation, testing and deployment.
 	- C.I is a process which monitors the new changes coming into V.C.S like Git, checkouts the source code, builds the change, runs the test case to test the change and deploys it to given environment automatically (seemlessly) without any manual intervention.
 
+2. What is continuous delivery?
+
+
+3.
 #How do you change Jenkins HOME directory??
 
 Go to $USER_HOME/.bashrc and add below ENV variable.
