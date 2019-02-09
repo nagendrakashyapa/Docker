@@ -167,13 +167,7 @@ Once we install this plugin, we can see who has done what or who made what chang
 4. Shelve project:
     If we have large size of build log files, un-used jenkins jobs, Jenkins will become slow(as it has to scan all projects for generating reports). So, It's good idea to archive any un-used jenkins jobs so that jenkins don't scan the project. since this plugin archives the projects, we can restore them if we want in the future.
 
-
-PLUGINS
-=============
-
-Test Results Analyzer 
-
-====
+5. Green balls plugin
 
 25. What are the different ways of installing a plugin?
 	
