@@ -3,7 +3,10 @@
 Day-1:
 ######
 #
-Diff bet'n Physical server, Virtual server and Docker container.
+Diff between..
+- Physical server
+- Virtual machine
+- Docker container.
 
 VM, Docker, usage in realtime
 
@@ -48,7 +51,7 @@ NOTE: Kernel can also be upgraded.
 
 
 Installation Steps:
-===========	==========	
+=====================	
 # Update apt-get cache
 	$ sudo apt-get update
 
@@ -58,7 +61,7 @@ Installation Steps:
 # Add GPG key to apt repository
 	$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-# Setup Stable repository:
+# Setup Stable repository (Add docker download URL manually to apt cache):
 	$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 	
 # Update apt package index:
@@ -81,7 +84,7 @@ DAY-2
 Managing docker containers
 ===============================
 #
-docker run command:
+"docker run" command
 - "docker run" command provides all lanuching capabilities for docker to create a container.
 - we use `docker run` to create new containers.
 
@@ -99,7 +102,7 @@ sudo docker run -it ubuntu /bin/bash
 			  This will be downloaded by default from 'Docker hub' for the first
 			  time.
 	
-	/bin/bash: which shell need to be installed in the terminal
+	/bin/bash: shell that will be installed in the terminal.
 
 
 
@@ -125,8 +128,7 @@ Setup SSH in the containers so that they can communicate to each other
 - Create two containers
 		172.17.0.2
 		172.17.0.3
-- Try to connect to 172.17.0.3 from 172.17.0.2 using below command. You will get an 
-  error
+- Try to connect to 172.17.0.3 from 172.17.0.2 using below command. You will get an error
 	$ ssh gamut@172.17.0.3
 
 - Install ssh server
@@ -199,10 +201,11 @@ docker info
 # Attaching to a running container
 	docker attach gamut
 	docker attach b1b1c8dc1939
-	
+
+
 
 # List Stopped containers only
-$ docker ps -a -f status=exited ( Where Status can be exited / running )
+$ docker ps -a -f status=exited ( Where Status can be exited/running )
 
 
 DAY-3:
@@ -222,7 +225,7 @@ DAY-3:
 - docker inspect comamnd "interrogates" the container and returns the info like.. configuration info, names, commands, n/w configurations, stopped/running ..etc.
 	 
 	 Examples:
-	$ docker inspect dgamut
+	$ docker inspect <container-name>
 
 	$ docker inspect --format '{{.Config.Hostname}}' dgamut
 
@@ -258,7 +261,7 @@ Agenda:
 # Listing docker images
 		- docker image ls
 
-- Images live in '/var/lib/docker/image/aufs/imagedb/content/sha256'
+- Images live in '/var/lib/docker/image/overlay2/imagedb/content/sha256'
 - Containers live in '/var/lib/docker/containers'
 
 
@@ -266,7 +269,9 @@ Agenda:
 a. Works In my machine problem.
 b. Developers can set local env.
 c. Issue? don't troubleshoot. Just throw it away and create new instantly.
-d. Auto scale your machine
+d. Auto scale your environment
+e. No need to live with complex, redundant configurations.
+f. You can leverage/utilize local machines's computing power when you need to test your code on multiple machines, instead of waiting for DevOps team to supply or wasting extra computing power. you already have 500GM, 16GB RAM right? are you utilising it? NO! then whey again you need extra hardware?
 
 
 DAY-5:
@@ -297,28 +302,44 @@ sudo apt-get purge nginx nginx-common
 		2. docker "build" cmd & Dockerfile
 
 # Creating docker image using "docker commit" command
-Problem:
-	Ship an application with ubuntu, nginx web server and code to your customer.
 
+PROJECT-1:
+	Create an image which will ship application code along with nginx configuration.
 
-	- create container
+-create container
+	$ docker run -it --name school-app-base-cont ubuntu /bin/bash
 	
-	- Install nginx manually
+- Install nginx manually
+	$ apt-get update
+	$ apt-get install -y nginx
+
+- Deploy some application code into /var/www/html
+	sample index.html:
+=======
+		<html>
+   			<body>
+     			<h1 style="color:red;">Gamutkart Online Training Portal</h1>
+				</body> 
+		</html>
+=======
+
+- Create a docker image from the container (OR) Convert docker container as 	 
+  docker image
+	$ docker commit school-app-base-cont nageshvkn/nginx-img
 	
-	- create a docker image from the container OR convert docker container as 	
-	  docker image
-		$ docker commit nginx-container "nageshvkn/nginx-image"
-	
-	- check if image has been created
-	  $ docker images
+- Check if image has been created
+	$ docker images
 
-	- push the newly created image to docker hub
-		$ docker login
-		$ docker push nageshvkn/nginx-img
+- Push the newly created image to docker hub
+	$ docker login
+	$ docker push nageshvkn/nginx-img
 
+Note: Now you have succussfully containerized your application and published the iamge using DockerHub
 
-	- Customers can spin millions of new containers using below command.
-		$ docker run -it nageshvkn/nginx-img /bin/bash
+Note: To verify your image, create a container as your customer
+
+- Customers can spin millions of new containers using below command and all get application with nginx out-of-box.
+	$ docker run -it nageshvkn/nginx-img /bin/bash
 
 
 PROJECT-2:
@@ -394,12 +415,12 @@ official images are controled by Docker core team.
 
 
 # Specifying Image via tags
-	- ubuntu:14.04
+	- ubuntu:16.04
 	  ubuntu- is image name
-	  14.04 - is called tag
+	  16.04 - is called tag
 
 # Pulling the images
-	- docker pull centos
+	- docker pull tomcat
 
 # Searching docker images in docker hub
 	- docker search puppet
@@ -420,7 +441,7 @@ Docker Image layers
 - Checking the history of our docker image
 	$ docker history <Image-Id>
 
-# Build image without existing image	
+# Build image without using build cache	
 	- Use --no-cache option
 	$ docker build --no-cache -t="username/imagename" .
 
@@ -447,11 +468,14 @@ Gamutkart Real application;
 - Build and deployments with Docker containers.
 - Real Containerization with Docker.
 - Creating dockerized environments.
+- Dockerizing your application.
 
 Question:
 How are you using docker containerization tool for your builds and deployments?
 Can you explain your Docker environment?
-can you explain how you have implemented Docker in your project?
+Can you explain how you have implemented Docker in your project?
+Given a chance how do you dockerize your application?
+
 
 1. Clone the source code from Git or any other V.C.S
 2. Build the code using your favourate build tool Maven/ANT
@@ -481,7 +505,6 @@ Step:5
 
 #
 Docker and Jenkins Integration
-
 
 
 Notes:
@@ -532,14 +555,18 @@ Run docker command without sudo.
 
 Misc:
 =======
-#
-Copying file from 'host machine' to docker container
-$ docker cp filename contaier_name:/target/path/of/container
+# How to set Environment variable in a container?
+ENV JAVA_HOME /home/gamut/Distros/jdk1.8.0_151
 
-Extras:
-docker networking
-docker compose
-docker volumes
-docker swarm
+# How to you log into a container automatically using a particular user
+	Add below docker instruction
+		USER gamut
+
+# How do you cd to a particular directory automatically once the container is created?
+	WORKDIR /home/gamut
+
+# How do you pass arguments to the container during "docker run" command?
+	CMD ["/usr/sbin/useradd", "-m", "-d", "/home/gamut", "-s", "/bin/bash", "gamut"]
+
 
 
